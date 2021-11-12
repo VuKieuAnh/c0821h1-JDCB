@@ -1,7 +1,10 @@
-package codegym.c08.service;
+package codegym.c08.service.customer;
 
 import codegym.c08.config.ConnectionSingleton;
 import codegym.c08.model.Customer;
+import codegym.c08.model.TypeCustomer;
+import codegym.c08.service.type.ITypeService;
+import codegym.c08.service.type.TypeCustomerService;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,6 +12,8 @@ import java.util.List;
 
 public class CustomerServiceDB implements ICustomerService {
 
+    public static final String CREATECUSTOMER = "insert into customer (id, name, address, email, type_id) value (?, ?, ?, ?, ?);";
+    private ITypeService typeService = new TypeCustomerService();
     public Connection getConnection(){
         Connection connection = null;
         try {
@@ -46,8 +51,11 @@ public class CustomerServiceDB implements ICustomerService {
                 String name = resultSet.getString("name");
                 String address = resultSet.getString("address");
                 String email = resultSet.getString("email");
+                int type_id = resultSet.getInt("type_id");
+                TypeCustomer typeCustomer = typeService.findById(type_id);
                 // tao moi doi tuong
                 Customer customer = new Customer(id, name, address, email);
+                customer.setTypeCustomer(typeCustomer);
                 // them vao list
                 customers.add(customer);
             }
@@ -66,17 +74,25 @@ public class CustomerServiceDB implements ICustomerService {
         Connection connection = ConnectionSingleton.getConnection();
         // goi cau query
         try {
+            connection.setAutoCommit(false);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(
-                    "insert into customer (id, name, address, email) value (?, ?, ?, ?);"
+                    CREATECUSTOMER
             );
+            CallableStatement statement = connection.prepareCall("afhsgfsa");
 
             // truyen tham so tuong ung
             preparedStatement.setString(1, customer.getId());
             preparedStatement.setString(2, customer.getName());
             preparedStatement.setString(3, customer.getAddress());
             preparedStatement.setString(4, customer.getEmail());
+            preparedStatement.setInt(5, customer.getTypeCustomer().getId());
 
             preparedStatement.executeUpdate();
+            connection.commit();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();

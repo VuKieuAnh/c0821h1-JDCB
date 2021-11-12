@@ -1,4 +1,4 @@
-package codegym.c08.service;
+package codegym.c08.service.customer;
 
 import codegym.c08.model.Customer;
 

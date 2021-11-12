@@ -1,10 +1,11 @@
 package codegym.c08.controller;
 
 import codegym.c08.model.Customer;
-import codegym.c08.service.CustomerFile;
-import codegym.c08.service.CustomerServiceDB;
-import codegym.c08.service.CustomerServiceImpl;
-import codegym.c08.service.ICustomerService;
+import codegym.c08.model.TypeCustomer;
+import codegym.c08.service.customer.CustomerServiceDB;
+import codegym.c08.service.customer.ICustomerService;
+import codegym.c08.service.type.ITypeService;
+import codegym.c08.service.type.TypeCustomerService;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -16,6 +17,7 @@ import java.util.List;
 public class CustomerServlet extends HttpServlet {
 
     ICustomerService customerService = new CustomerServiceDB();
+    ITypeService typeService = new TypeCustomerService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -33,6 +35,7 @@ public class CustomerServlet extends HttpServlet {
 
     private void showFormNewCustomer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //goi trang danh sach
+        request.setAttribute("typecus", typeService.findAll());
         RequestDispatcher dispatcher = request.getRequestDispatcher("customer/create.jsp");
         dispatcher.forward(request, response);
     }
@@ -66,7 +69,11 @@ public class CustomerServlet extends HttpServlet {
         String name = request.getParameter("name");
         String address = request.getParameter("address");
         String email = request.getParameter("email");
+        String typeids = request.getParameter("type");
+        int typeid = Integer.parseInt(typeids);
         Customer newC = new Customer(id, name, address, email);
+        TypeCustomer typeCustomer = typeService.findById(typeid);
+        newC.setTypeCustomer(typeCustomer);
         //b2: goi service them moi
         customerService.save(newC);
         //b3: quay tro ve trang danh sach

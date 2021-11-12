@@ -19,6 +19,7 @@
             <td>${c.id}</td>
             <td>${c.name}</td>
             <td>${c.address}</td>
+            <td>${c.getTypeCustomer().getName()}</td>
         </tr>
     </c:forEach>
 </table>

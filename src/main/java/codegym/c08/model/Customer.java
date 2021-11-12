@@ -6,6 +6,16 @@ public class Customer {
     private String email;
     private String address;
 
+    private TypeCustomer typeCustomer;
+
+    public TypeCustomer getTypeCustomer() {
+        return typeCustomer;
+    }
+
+    public void setTypeCustomer(TypeCustomer typeCustomer) {
+        this.typeCustomer = typeCustomer;
+    }
+
     public Customer(String id, String name, String email, String address) {
         this.id = id;
         this.name = name;
